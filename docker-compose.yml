@@ -1,0 +1,9 @@
+services:
+  groxy:
+    image: registry.fabiomora.dev/groxy:latest
+    build: .
+    command: --config /etc/groxy/groxy.yaml
+    ports:
+      - "9003:80"
+    volumes:
+      - ./example.yml:/etc/groxy/groxy.yaml

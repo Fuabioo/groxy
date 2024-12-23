@@ -1,0 +1,40 @@
+# log control for the server
+debug: false
+verbose: true
+colors: true
+# the port to listen to
+port: 9003
+# the domain to proxy to
+domain: https://example.com
+# whether to use TLS or not when connecting to the real service
+insecure: true
+
+# endpoint configuration for the proxy, this is the most important part
+# without it the proxy will not do anything more than forwarding requests
+endpoints:
+  # a string key is the path to match
+  # TODO this could be a regular expression
+  '/healthcheck':
+    # the delay duration, in this case between 40ms and 400ms
+    delay:
+      - 40ms
+      - 400ms
+    # the error configuration, this is used to simulate an error
+    # without touching the real service code (or even if it's not possible)
+    error:
+      # could be a chance percentage or every nth request
+      # chance: 0.5
+      every:
+        # every 3 requests the next 2 will fail
+        nth: 3
+        amount: 2
+      # the response to send when the error is triggered
+      # if not provided an empty 400 response will be returned
+      response:
+        status: 400
+        body: '{"error": "Test error"}'
+    # the response to send when the error is not triggered
+    # this is completely optional and if not present the real service will be called
+    response:
+      status: 200
+      body: '{"status": "UP"}'
