@@ -8,7 +8,7 @@ import (
 type (
 	EndpointConfiguration struct {
 		sync.RWMutex `yaml:"-"`
-		MockResponse *Response           `yml:"response"`
+		Response     *Response           `yml:"response"`
 		Delay        *Delay              `yml:"delay"`
 		Error        *ErrorConfiguration `yml:"error"`
 	}
@@ -25,6 +25,20 @@ type (
 		Body        string `yml:"body"`
 	}
 )
+
+func (e *ErrorConfiguration) GetChance() *ErrorChance {
+	if e == nil {
+		return nil
+	}
+	return e.Chance
+}
+
+func (e *ErrorConfiguration) GetEvery() *Every {
+	if e == nil {
+		return nil
+	}
+	return e.Every
+}
 
 func (e *ErrorConfiguration) String() string {
 	if e == nil {

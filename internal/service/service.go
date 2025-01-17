@@ -64,7 +64,7 @@ func New() (*Service, error) {
 		endpoints[endpoint] = &config
 		log.Debug("🧐 parsed endpoint",
 			"endpoint", endpoint,
-			"config", endpoint,
+			"config", &config,
 		)
 
 	}
@@ -175,15 +175,15 @@ func (h *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		endpoint.Delay.Take()
 
 		var response *Response
-		if err := endpoint.Error.Chance.Take(); err != nil {
+		if err := endpoint.Error.GetChance().Take(); err != nil {
 			response = endpoint.Error.Response
-		} else if err := endpoint.Error.Every.Take(); err != nil {
+		} else if err := endpoint.Error.GetEvery().Take(); err != nil {
 			response = endpoint.Error.Response
 			if response.StatusCode == 0 {
 				response.StatusCode = http.StatusBadRequest
 			}
-		} else if endpoint.MockResponse != nil {
-			response = endpoint.MockResponse
+		} else if endpoint.Response != nil {
+			response = endpoint.Response
 		}
 
 		endpoint.Unlock()
